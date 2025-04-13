@@ -16,4 +16,9 @@ class OrderScreen extends ConsumerWidget {
       ),
     );
   }
+
+  /*     Future<String> caricaDati {
+      final dir =  getApplicationDocumentDirectory();
+      final isar =  Isar.open([Prodotto], directory: dir.path);
+    } */
 }

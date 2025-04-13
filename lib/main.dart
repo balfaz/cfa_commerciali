@@ -1,8 +1,13 @@
+import 'dart:developer';
+
+import 'package:cfa_commercial/data/database/service_database.dart';
 import 'package:cfa_commercial/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ServiceDatabase().initDatabase();
   runApp(const ProviderScope(child: MyApp()));
 }
 

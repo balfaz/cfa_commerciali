@@ -2,30 +2,19 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class ServiceDatabase {
-  static final ServiceDatabase _instance = ServiceDatabase._internal();
-  static Database? _database;
+  static Database? _db;
 
-  factory ServiceDatabase() {
-    return _instance;
-  }
+  static const String _dbName = 'cfa-db-mobile.db';
 
-  ServiceDatabase._internal();
-
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDatabase();
-    return _database!;
-  }
-
-  Future<Database> _initDatabase() async {
+  Future<Database> initDatabase() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'cfa-db-mobile.db');
+    final path = join(dbPath, _dbName);
 
     return await openDatabase(path, version: 1, onCreate: _onCreate);
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    // Creazione tabella prodotti
+    //? Creazione tabella prodotti
     await db.execute('''
       CREATE TABLE products (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,7 +27,7 @@ class ServiceDatabase {
       )
     ''');
 
-    // Creazione tabella vendor
+    //? Creazione tabella vendor
     await db.execute('''
       CREATE TABLE vendor (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,17 +40,18 @@ class ServiceDatabase {
       )
     ''');
 
+    //? Creazione tabella cliente
     await db.execute('''
-      CREATE TABLE Cliente (
+      CREATE TABLE cte (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         codiceCliente TEXT NOT NULL,
         nome TEXT NOT NULL,
         email TEXT NOT NULL,
-        numeroTelefono TEXT NOT NULL,
+        numeroTelefono TEXT NOT NULL
       )
     ''');
 
-    // Creazione tabella ordHeader
+    //? Creazione tabella ordHeader
     await db.execute('''
       CREATE TABLE ordHeader (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,13 +65,11 @@ class ServiceDatabase {
         dataCreazione TEXT NOT NULL,
         dataModifica TEXT NOT NULL,
         statoOrdinePagamento TEXT NOT NULL,
-        statoOrdine TEXT NOT NULL,
-        Foreign Key (codiceVendor) REFERENCES vendor (id),
-
+        statoOrdine TEXT NOT NULL
       )
     ''');
 
-    // Creazione tabella ordDetails
+    //? Creazione tabella ordDetails
     await db.execute('''
       CREATE TABLE ordDetails (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -94,17 +82,14 @@ class ServiceDatabase {
         statoRiga TEXT NOT NULL,
         dataConsegna TEXT NOT NULL,
         dataCreazione TEXT NOT NULL,
-        dataModifica TEXT NOT NULL,
-        FOREIGN KEY (nroOrdine) REFERENCES ordHeader (nroOrdine),
-        FOREIGN KEY (codiceArticolo) REFERENCES products (codiceArticolo)
-      )
+        dataModifica TEXT NOT NULL)
     ''');
   }
 
   Future<void> closeDatabase() async {
-    final db = _database;
-    if (db != null) {
-      await db.close();
+    //final db = _db;
+    if (_db != null) {
+      await _db!.close();
     }
   }
 }
